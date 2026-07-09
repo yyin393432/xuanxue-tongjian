@@ -74,6 +74,7 @@
       '<p>化禄：<b>' + (s.禄 || '—') + '</b> ｜ 化权：<b>' + (s.权 || '—') + '</b> ｜ 化科：<b>' + (s.科 || '—') + '</b> ｜ 化忌：<b>' + (s.忌 || '—') + '</b></p>';
     box.appendChild(sh);
 
+    if (window.SVGKit) box.insertAdjacentHTML('beforeend', window.SVGKit.ziweiChart(r.gongs, r.mingGong, r.shenGong));
     if (window.BaiHua && window.BaiHua.ziwei) box.appendChild(window.BaiHua.ziwei(r));
 
     box.appendChild(el('p', 'disclaimer', '免责声明：本工具仅供娱乐与文化研究，所有结果不代表任何医疗、财务、法律或人生建议。请理性看待，切勿迷信。'));
