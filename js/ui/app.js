@@ -27,7 +27,8 @@
     { id: 'liunian', name: '流年运势', desc: '大运流年 · 年度运程', status: 'ready' },
     { id: 'taiyi', name: '太乙/大六壬/铁板', desc: '传统术数支流（简化科普）', status: 'ready' },
     { id: 'mianxiang', name: '面相/手相/痣相', desc: '引导式图文问答', status: 'ready' },
-    { id: 'qianshi', name: '前世今生', desc: '创意娱乐生成（仅供娱乐）', status: 'ready' }
+    { id: 'qianshi', name: '前世今生', desc: '创意娱乐生成（仅供娱乐）', status: 'ready' },
+    { id: 'zonglan', name: '综合命盘', desc: '多维汇总 · 总览报告', status: 'ready' }
   ];
 
   const SHICHEN = [
@@ -55,7 +56,7 @@
   const el = (tag, cls, html) => { const e = document.createElement(tag); if (cls) e.className = cls; if (html != null) e.innerHTML = html; return e; };
 
   // 中文序号（菜单用，一..廿一）
-  const CN_NUM = ['零', '一', '二', '三', '四', '五', '六', '七', '八', '九', '十', '十一', '十二', '十三', '十四', '十五', '十六', '十七', '十八', '十九', '二十', '廿一'];
+  const CN_NUM = ['零', '一', '二', '三', '四', '五', '六', '七', '八', '九', '十', '十一', '十二', '十三', '十四', '十五', '十六', '十七', '十八', '十九', '二十', '廿一', '廿二'];
 
   // ===== 渲染菜单 =====
   function renderMenu() {
@@ -278,6 +279,9 @@
       (c.parts.timeKnown ? ' ＋ 时 ' + ChengGu.fmt(c.parts.time) : ' ＋ 时（不详）') + ' ＝ <b>' + c.totalText + '</b></p>' +
       '<blockquote>' + c.poem + '</blockquote>';
     box.appendChild(cg);
+
+    // 可视化：五行分布
+    if (window.SVGKit) box.insertAdjacentHTML('beforeend', window.SVGKit.baziWuxing(r.totalWu, r.dayW, r.strength));
 
     // 白话文讲解（通俗解读）
     box.appendChild(baihuaBazi(r, est));
