@@ -119,11 +119,13 @@
   function zonglanText(o) {
     const { bz, zw, xz, ln } = o;
     const parts = [];
-    if (bz) parts.push('从八字看，你的日主为「' + esc(bz.dayW) + '」，整体' + esc(bz.strength) + '，五行中' + esc(topWuxing(bz.totalWu)) + '最旺。');
-    if (zw && zw.gongs[0].stars.length) parts.push('紫微命宫落在' + esc(zw.mingGong.zhi) + '宫，主星为' + esc(zw.gongs[0].stars.join('、')) + '，是性格与先天禀赋的核心。');
-    if (xz) parts.push('太阳星座为' + esc(xz.name) + '，是外界对你性格的第一印象。');
-    if (ln) parts.push('大运约' + esc(ln.startAge) + '岁起运；今年流年' + (ln.liunians[0] ? esc(ln.liunians[0].gz) : '') + '，' + (ln.liunians[0] && ln.liunians[0].taiSuiDesc ? esc(ln.liunians[0].taiSuiDesc) : '整体平顺') + '。');
-    parts.push('以上只是多维度拼出的「大概轮廓」，命理玄学尚无科学依据，仅供娱乐参考；人生的走向终究握在自己手里。');
+    parts.push('综合命盘，就像把同一个人用四套不同的"滤镜"各拍一张照片——八字看先天能量底色，紫微看十二宫人生地图，星座看外界第一印象，流年看时间轴上的起伏。四张照片拼一起，才勉强凑出个"立体轮廓"。');
+    if (bz) parts.push('从八字这层看：你的日主为「' + esc(bz.dayW) + '（' + esc(bz.dayGan) + '）」，整体' + esc(bz.strength) + '，五行里' + esc(topWuxing(bz.totalWu)) + '最旺。这代表你先天的能量体质——好比有人天生"火力旺"，有人天生"需要被照顾"。');
+    if (zw && zw.gongs[0].stars.length) parts.push('从紫微这层看：命宫落在' + esc(zw.mingGong.zhi) + '宫，主星为' + esc(zw.gongs[0].stars.join('、')) + '，是你性格与先天禀赋的核心"房客"。星曜组合，决定你这间"命宫"敞亮还是憋闷。');
+    if (xz) parts.push('从星座这层看：太阳星座是' + esc(xz.name) + '，是你抛头露面时给别人留下的"第一印象标签"。它和八字、紫微未必一致——人本来就是多面的嘛。');
+    if (ln) parts.push('从流年这层看：大运约' + esc(ln.startAge) + '岁起运；今年流年' + (ln.liunians[0] ? esc(ln.liunians[0].gz) : '') + '，' + (ln.liunians[0] && ln.liunians[0].taiSuiDesc ? esc(ln.liunians[0].taiSuiDesc) : '整体平顺') + '。这是你今年这趟"天气"的大致体感。');
+    parts.push('💡 打个比方：这四套系统就像四个性格迥异的老前辈，各自给你的命运"提了句建议"。听着都挺有道理，但真过日子，还是得你自己拿主意。');
+    parts.push('最后说句大实话：以上只是多维度拼出的「大概轮廓」，命理玄学尚无科学依据，仅供娱乐参考。你的人生剧本，终究是握在自己手里的——滤镜再好看，也得你自己去演。');
     return parts.map(t => '<p>' + t + '</p>').join('');
   }
 })();
