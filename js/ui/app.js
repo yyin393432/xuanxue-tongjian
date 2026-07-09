@@ -159,7 +159,13 @@
     stage.appendChild(home);
 
     const start = $('#home-start');
-    if (start) start.onclick = () => { const p = $('#p-date'); if (p && p.scrollIntoView) p.scrollIntoView({ behavior: 'smooth', block: 'center' }); if (p) p.focus(); };
+    if (start) start.onclick = () => {
+      selectModule('bazi');
+      const p = $('#p-date');
+      if (p && p.focus) { try { p.focus({ preventScroll: true }); } catch (e) { p.focus(); } }
+      const top = $('#profile');
+      if (top && top.scrollIntoView) top.scrollIntoView({ behavior: 'smooth', block: 'start' });
+    };
     const rnd = $('#home-random');
     if (rnd) rnd.onclick = () => {
       const ready = MODULES.filter(m => m.status === 'ready' || m.status === 'ready-in-bazi');
