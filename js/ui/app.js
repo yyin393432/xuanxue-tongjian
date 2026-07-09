@@ -62,6 +62,12 @@
   function renderMenu() {
     const box = $('#menu');
     box.innerHTML = '';
+    // 首页入口（独立 class，不参与 .menu-item 的验证遍历）
+    const home = el('button', 'home-link');
+    home.dataset.id = 'home';
+    home.innerHTML = '<span class="hl-mark">❖</span><span class="hl-text">卷首 · 首页</span>';
+    home.onclick = () => selectModule('home');
+    box.appendChild(home);
     MODULES.forEach((m, i) => {
       const item = el('button', 'menu-item' + (m.status === 'ready' ? ' ready' : ''));
       item.dataset.id = m.id;
@@ -72,8 +78,106 @@
     });
   }
 
+  // ===== 首页（醒目 hero + 模块一览）=====
+  function baguaSVG() {
+    const cx = 100, cy = 100, R = 70;
+    const trigs = [[1, 1, 1], [1, 1, 0], [1, 0, 1], [1, 0, 0], [0, 1, 1], [0, 1, 0], [0, 0, 1], [0, 0, 0]];
+    let s = '<svg class="bagua" viewBox="0 0 200 200" aria-hidden="true">';
+    s += '<defs><radialGradient id="bgG" cx="50%" cy="50%" r="50%"><stop offset="0%" stop-color="#e3c585" stop-opacity="0.20"/><stop offset="100%" stop-color="#e3c585" stop-opacity="0"/></radialGradient></defs>';
+    s += '<circle cx="100" cy="100" r="96" fill="url(#bgG)"/>';
+    s += '<circle cx="100" cy="100" r="90" fill="none" stroke="#c9a86a" stroke-width="1" opacity="0.45"/>';
+    s += '<circle cx="100" cy="100" r="86" fill="none" stroke="#c9a86a" stroke-width="0.6" opacity="0.22"/>';
+    for (let i = 0; i < trigs.length; i++) {
+      const ang = i * 45 - 90;
+      let g = '<g transform="rotate(' + ang + ' 100 100)">';
+      const ly = cy - R;
+      for (let k = 0; k < 3; k++) {
+        const y = ly + k * 7;
+        if (trigs[i][k] === 1) {
+          g += '<line x1="' + (cx - 12) + '" y1="' + y + '" x2="' + (cx + 12) + '" y2="' + y + '" stroke="#e3c585" stroke-width="2" stroke-linecap="round"/>';
+        } else {
+          g += '<line x1="' + (cx - 12) + '" y1="' + y + '" x2="' + (cx - 2) + '" y2="' + y + '" stroke="#e3c585" stroke-width="2" stroke-linecap="round"/>';
+          g += '<line x1="' + (cx + 2) + '" y1="' + y + '" x2="' + (cx + 12) + '" y2="' + y + '" stroke="#e3c585" stroke-width="2" stroke-linecap="round"/>';
+        }
+      }
+      g += '</g>';
+      s += g;
+    }
+    s += '<g class="bagua-core"><circle cx="100" cy="100" r="20" fill="#15110b" stroke="#c9a86a" stroke-width="1.5"/>' +
+      '<path d="M100 80 a20 20 0 0 1 0 40 a10 10 0 0 1 0 -20 a10 10 0 0 0 0 -20z" fill="#c9a86a"/>' +
+      '<circle cx="100" cy="90" r="3.5" fill="#15110b"/><circle cx="100" cy="110" r="3.5" fill="#c9a86a"/></g>';
+    s += '</svg>';
+    return s;
+  }
+
+  function showHome() {
+    const stage = $('#stage');
+    if (!stage) return;
+    const prof = $('#profile'); if (prof) prof.style.display = 'none';
+    stage.innerHTML = '';
+    const home = el('div', 'home-view');
+
+    const hero = el('div', 'hero');
+    hero.innerHTML =
+      '<div class="hero-bg" aria-hidden="true">' + baguaSVG() + '</div>' +
+      '<div class="hero-inner">' +
+        '<div class="hero-badge">离线 · 开源 · 22 大模块 · 仅供娱乐</div>' +
+        '<h1 class="hero-title">玄学通鉴</h1>' +
+        '<p class="hero-sub">中国传统命理一站式离线工具 · 把玄学术语翻译成大白话</p>' +
+        '<div class="hero-pills">' +
+          '<span class="pill">🔮 八字 · 紫微 · 六爻</span>' +
+          '<span class="pill">🧭 奇门 · 易经 · 太乙</span>' +
+          '<span class="pill">💞 合婚 · 流年 · 生肖</span>' +
+          '<span class="pill">📜 测字 · 解梦 · 姓名</span>' +
+        '</div>' +
+        '<div class="hero-cta">' +
+          '<button class="primary" id="home-start">填写档案，开启命盘 →</button>' +
+          '<button class="ghost" id="home-random">随便逛逛 ✦</button>' +
+        '</div>' +
+        '<p class="hero-note">所有计算在本地完成，不上传任何数据 · 结果属民俗娱乐，切勿迷信</p>' +
+      '</div>';
+    home.appendChild(hero);
+
+    const gridWrap = el('div', 'module-section');
+    gridWrap.appendChild(el('h2', 'section-title', '模块一览 · 二十二宫'));
+    gridWrap.appendChild(el('p', 'section-sub', '点任意模块，立即开算。常用档案只需填一次，切换模块不丢失。'));
+    const grid = el('div', 'module-grid');
+    MODULES.forEach((m, i) => {
+      const card = el('button', 'module-card');
+      card.dataset.id = m.id;
+      const statusTxt = m.status === 'ready' ? '可用' : (m.status === 'ready-in-bazi' ? '含于八字' : '敬请期待');
+      const statusCls = m.status === 'ready' ? 'on' : (m.status === 'ready-in-bazi' ? 'sub' : 'soon');
+      card.innerHTML = '<span class="mc-idx">' + (CN_NUM[i + 1] || (i + 1)) + '</span>' +
+        '<span class="mc-name">' + m.name + '</span>' +
+        '<span class="mc-desc">' + m.desc + '</span>' +
+        '<span class="mc-tag ' + statusCls + '">' + statusTxt + '</span>';
+      card.onclick = () => selectModule(m.id);
+      grid.appendChild(card);
+    });
+    gridWrap.appendChild(grid);
+    home.appendChild(gridWrap);
+    stage.appendChild(home);
+
+    const start = $('#home-start');
+    if (start) start.onclick = () => { const p = $('#p-date'); if (p && p.scrollIntoView) p.scrollIntoView({ behavior: 'smooth', block: 'center' }); if (p) p.focus(); };
+    const rnd = $('#home-random');
+    if (rnd) rnd.onclick = () => {
+      const ready = MODULES.filter(m => m.status === 'ready' || m.status === 'ready-in-bazi');
+      const pick = ready[Math.floor(Math.random() * ready.length)];
+      selectModule(pick.id);
+    };
+  }
+
   function selectModule(id) {
+    if (id === 'home') {
+      document.querySelectorAll('.menu-item').forEach(b => b.classList.remove('active'));
+      const hl = document.querySelector('.home-link'); if (hl) hl.classList.add('active');
+      showHome();
+      return;
+    }
+    const prof = $('#profile'); if (prof) prof.style.display = '';
     document.querySelectorAll('.menu-item').forEach(b => b.classList.toggle('active', b.dataset.id === id));
+    const hl = document.querySelector('.home-link'); if (hl) hl.classList.remove('active');
     const m = MODULES.find(x => x.id === id);
     const stage = $('#stage');
     stage.innerHTML = '';
@@ -290,63 +394,64 @@
     box.appendChild(el('p', 'disclaimer', '免责声明：本工具仅供娱乐与文化研究，所有结果不代表任何医疗、财务、法律或人生建议。请理性看待，切勿迷信。'));
   }
 
-  // ===== 八字白话文讲解（人话版）=====
+  // ===== 八字白话文讲解（人话版 · 生动详尽）=====
   function baihuaBazi(r, est) {
     const box = el('details', 'card explain');
     let h = '<summary>白话文讲解（通俗解读 · 人话版）</summary><div class="explain-body">';
 
-    h += '<p><b>先说人话：</b>所谓"八字"，就是把你出生的年、月、日、时，各用一对"天干+地支"表示，共四对八个字，相当于你出生那一刻的"时空坐标"。古人认为这个坐标与性格、运势走向有关——这是传统文化视角，<b>仅供娱乐参考</b>。</p>';
+    h += '<p><b>先说人话：</b>所谓"八字"，就是把你出生的年、月、日、时，各用一对"天干+地支"表示，一共四对八个字，相当于你呱呱坠地那一刻的"时空坐标"。古人觉得这个坐标跟性格、运势走向有点关系——这是传统文化视角，<b>仅供娱乐参考</b>，别太当真。</p>';
+    h += '<p class="eg">💡 打个比方：八字就像你出生那天的"出厂设置条形码"。扫码能看到一堆参数，但这些参数不决定你以后干啥、赚多少——后天的你，才是真正的主程序。</p>';
 
     const strengthWord = r.strength.indexOf('强') >= 0 ? '偏强' : (r.strength.indexOf('弱') >= 0 ? '偏弱' : '中和');
-    h += '<p><b>你的"日主"是 ' + r.dayGan + '（五行属' + r.dayW + '）：</b>"日主"代表命盘里的"你本人"。你的日主' + strengthWord +
-      '（简版评分 ' + r.score + '）。' +
-      (strengthWord === '偏弱' ? '偏弱一般理解为：你更需要"同类"（' + r.dayW + '）或"生你者"来帮扶，性格上可能偏温和、需要外界助力。'
-        : strengthWord === '偏强' ? '偏强一般理解为：你自身能量足，性格可能更主动有主见，但也要注意"过刚易折"，适当收敛锋芒。'
-        : '中和一般理解为：自身能量较均衡，适应面较广。') +
+    h += '<p><b>你的"日主"是 ' + r.dayGan + '（五行属' + r.dayW + '）：</b>"日主"就是命盘里代表"你本人"的那一个字，是整个盘的中心C位。你的日主' + strengthWord + '（简版评分 ' + r.score + '）。' +
+      (strengthWord === '偏弱' ? '偏弱，翻译成大白话：你自身能量偏弱，更需要"同类"（' + r.dayW + '）或"生你的人事物"来帮扶。性格上可能偏温和、慢热，关键时刻需要外界推一把。'
+        : strengthWord === '偏强' ? '偏强，翻译成大白话：你自身能量足，性格可能更主动、有主见、敢扛事。但也要记着"过刚易折"——太冲了容易绊着自己，适当收敛锋芒更稳。'
+        : '中和，翻译成大白话：你自身能量比较均衡，适应面广，不挑环境，像个"全能替补"哪儿都能站。') +
       '</p>';
 
     const order = WuXing.WUXING_ORDER;
     const entries = order.map(w => ({ w: w, v: r.totalWu[w] || 0 })).sort((a, b) => b.v - a.v);
     const maxW = entries[0], minW = entries[entries.length - 1];
-    h += '<p><b>五行分布：</b>你命中「' + maxW.w + '」最旺（' + maxW.v + '），「' + minW.w + '」最弱（' + minW.v + '）。' +
-      (minW.v === 0 ? '其中「' + minW.w + '」为 0，民间俗称"缺' + minW.w + '"——这只是五行统计，不代表吉凶，补不补见仁见智。'
-        : '五行相对均衡，无明显偏废。') +
-      '五行一句话：' + order.map(w => w + '—' + (BaziText.WUXING_DESC[w] || '')).join('；') + '。</p>';
+    h += '<p><b>五行分布（你的"能量成分表"）：</b>你命中「' + maxW.w + '」最旺（' + maxW.v + '），「' + minW.w + '」最弱（' + minW.v + '）。' +
+      (minW.v === 0 ? '其中「' + minW.w + '」为 0，民间俗称"缺' + minW.w + '"——但这只是五行统计数字，不代表凶吉，补不补全看个人喜好（就像体检某项偏低，不等于就生病）。'
+        : '五行相对均衡，没有明显偏废，整体比较顺。') +
+      '五行一句话速记：' + order.map(w => w + '—' + (BaziText.WUXING_DESC[w] || '')).join('；') + '。</p>';
 
     const daySS = r.shiShenMap.day;
-    h += '<p><b>十神（你与周围关系的"角色卡"）：</b>以日干为中心，其他干支被分成十种"神"——比劫（同我）、食伤（我生）、财（我克）、官杀（克我）、印（生我），再分正偏。你日柱天干十神为「' + (daySS.gan || '—') + '」、地支藏干十神为「' + (daySS.zhi || '—') + '」。比如正官主规矩责任、正财主稳定收入、正印主学识庇护——具体组合要结合全盘看。</p>';
+    h += '<p><b>十神（你与周围世界的"关系角色卡"）：</b>以你的日干为中心，其他干支被分成十种"神"——比劫（跟我同类的）、食伤（我生出来的才华/表达）、财（我克到的资源）、官杀（克我的压力/规则）、印（生我养我的靠山），再分正偏。你日柱天干的十神是「' + (daySS.gan || '—') + '」、地支藏干的十神是「' + (daySS.zhi || '—') + '」。比如正官主规矩与责任、正财主稳定收入、正印主学识与庇护——具体好坏得看整盘搭配，单拎一个说不准。</p>';
+    h += '<p class="eg">💡 十神就像你社交圈里的"人物设定"：有给你撑腰的（印）、有你搞定的（财）、有管着你的（官杀）、有你带飞的（食伤）。盘里哪种多，你这出戏就更偏哪种戏路。</p>';
 
     const hitS = r.shensha.filter(s => s.count > 0);
     const explainMap = {
-      '桃花': '主异性缘、人缘与情感机遇，命带桃花通常更讨喜、社交活跃。',
-      '驿马': '主走动、变动、远行或环境变迁，命带驿马者往往不安分、易离家发展。',
-      '华盖': '主聪明、孤高、喜玄学艺术，常独立思考、带点清冷气质。',
-      '文昌': '主学业、文才与考试运，利于读书与文字工作。',
-      '天乙贵人': '主贵人相助、逢凶化吉，遇事易得他人帮扶。',
-      '将星': '主领导才能与气场，易在群体中崭露头角。',
-      '羊刃': '主刚烈、决断，也带冲动之象，需以柔克刚。',
-      '天德': '主福德、化解灾厄，是吉神。',
-      '月德': '主平和、积善，也是吉神。',
-      '劫煞': '主波折、是非，需注意人际与财物。',
-      '灾煞': '主意外与小灾，宜谨慎。',
-      '孤辰': '主孤独、独立，感情上宜主动经营。',
-      '寡宿': '主清静、内向，宜多融入人群。',
-      '空亡': '主虚浮、落空，相关事项易有始无终，宜务实。'
+      '桃花': '主异性缘、人缘与情感机遇，命带桃花通常更讨喜、社交活跃，但也可能"桃花太旺"招是非。',
+      '驿马': '主走动、变动、远行或环境变迁，命带驿马者往往坐不住、易离家发展或常出差。',
+      '华盖': '主聪明、孤高、喜玄学艺术，常独立思考、带点清冷气质，也可能偏内向。',
+      '文昌': '主学业、文才与考试运，利于读书、写作与文字类工作。',
+      '天乙贵人': '主贵人相助、逢凶化吉，遇事容易得到他人帮扶，是上好神煞。',
+      '将星': '主领导才能与气场，易在群体里崭露头角、挑大梁。',
+      '羊刃': '主刚烈、决断，也带冲动之象，需以柔克刚、三思后行。',
+      '天德': '主福德、化解灾厄，是吉神，遇难易有转机。',
+      '月德': '主平和、积善，也是吉神，主安稳。',
+      '劫煞': '主波折、是非，需注意人际与财物，勿贪快钱。',
+      '灾煞': '主意外与小灾，宜谨慎出行、少冒进。',
+      '孤辰': '主孤独、独立，感情上宜主动经营、多表达。',
+      '寡宿': '主清静、内向，宜多融入人群、别总宅着。',
+      '空亡': '主虚浮、落空，相关事项易有始无终，宜务实落地。'
     };
     if (hitS.length) {
       h += '<p><b>你命带 ' + hitS.length + ' 类神煞（共 ' + r.shensha.reduce((a, s) => a + s.count, 0) + ' 处），挑几个用人话讲：</b></p><ul>';
       hitS.forEach(s => {
-        h += '<li><b>' + s.name + '×' + s.count + '</b>：' + (explainMap[s.name] || s.detail) + '（命中：' + s.hits.join('、') + '）</li>';
+        h += '<li><b>' + s.name + '×' + s.count + '</b>：' + (explainMap[s.name] || s.detail) + '（命中位置：' + s.hits.join('、') + '）</li>';
       });
-      h += '</ul>';
+      h += '</ul><p class="eg">💡 神煞像游戏里的"附加buff"：吉神是增益道具，煞神是减益debuff。但buff再好，不操作也赢不了；debuff再凶，小心点也能过。别被几个煞字吓着。</p>';
     } else {
-      h += '<p><b>神煞：</b>本次常用神煞均未命中，属正常情况。</p>';
+      h += '<p><b>神煞：</b>本次常用神煞都没命中，属于正常情况——没有附加buff，也没有debuff，纯看你自己发挥。</p>';
     }
 
     const c = r.chenggu;
-    h += '<p><b>称骨：</b>你的"骨重"合计 <b>' + c.totalText + '</b>。对应称骨歌：' + c.poem + '（袁天罡称骨法传统断语，含文学夸张，理性看待。）</p>';
+    h += '<p><b>称骨：</b>把年、月、日、时（时辰不详就少算一项）的重量加总，你的"骨重"合计 <b>' + c.totalText + '</b>。对应称骨歌：' + c.poem + '（这是袁天罡称骨法的传统断语，带文学夸张和宿命味，当段押韵的"古人吐槽"听听就好，理性看待。）</p>';
 
-    h += '<p class="tip">以上为通俗化解读，帮你"看明白"排盘结果。命理流派多、口径不一，本工具为简化科普版，切勿用于人生重大决策。</p>';
+    h += '<p class="tip">以上为通俗化解读，帮你"看个热闹、读个明白"。命理流派多、口径杂，本工具是简化科普版，切勿用于人生重大决策。</p>';
     h += '</div>';
     box.innerHTML = h;
     return box;
@@ -358,7 +463,9 @@
   function init() {
     renderMenu();
     buildProfile();
-    selectModule('bazi');
+    const brand = document.querySelector('.brand-wrap');
+    if (brand) { brand.style.cursor = 'pointer'; brand.title = '返回首页'; brand.onclick = () => selectModule('home'); }
+    selectModule('home');
   }
   if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', init);
   else init();
