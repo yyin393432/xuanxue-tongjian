@@ -76,6 +76,7 @@
     grid.innerHTML = g;
     box.appendChild(grid);
 
+    if (window.SVGKit) box.insertAdjacentHTML('beforeend', window.SVGKit.qimenGrid(r.cells, r.ju, r.yinText));
     box.appendChild(window.BaiHua.qimen(r));
     box.appendChild(el('p', 'disclaimer', '免责声明：本工具仅供娱乐与文化研究，所有结果不代表任何医疗、财务、法律或人生建议。请理性看待，切勿迷信。本盘为简化排盘（拆补法思路、三元按日干、中宫寄坤、八神不入中宫），深入占断请研习专业典籍。'));
   }
