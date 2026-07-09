@@ -1,0 +1,11 @@
+# 内部测试脚手架（引用沙箱路径，非产品内容）
+_verify.js
+_verify_all.js
+
+# 操作系统垃圾文件
+.DS_Store
+Thumbs.db
+desktop.ini
+
+# 依赖（本工具为纯静态，无 node_modules）
+node_modules/

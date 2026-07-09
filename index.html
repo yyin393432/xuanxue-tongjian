@@ -1,0 +1,99 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>玄学通鉴 · 中国传统命理离线工具</title>
+  <link rel="stylesheet" href="css/style.css" />
+</head>
+<body>
+  <header class="topbar">
+    <div class="brand">玄学通鉴</div>
+    <div class="sub">中国传统命理 · 离线 · 开源 · 仅供娱乐</div>
+  </header>
+  <div class="layout">
+    <aside class="sidebar">
+      <div class="side-title">模块</div>
+      <div id="menu" class="menu"></div>
+    </aside>
+    <main class="content">
+      <div id="profile"></div>
+      <div id="stage"></div>
+    </main>
+  </div>
+  <footer class="foot">Apache-2.0 · 本工具仅供娱乐与文化研究，结果不代表任何医疗/财务/法律/人生建议</footer>
+
+  <!-- 离线历法库（无第三方依赖，已 vendoring） -->
+  <script src="js/vendor/lunar.js"></script>
+
+  <!-- 纯计算核心（无 DOM 依赖，可复用至 APP/EXE） -->
+  <script src="js/core/wuxing.js"></script>
+  <script src="js/core/shensha.js"></script>
+  <script src="js/core/chenggu.js"></script>
+  <script src="js/core/truesolar.js"></script>
+  <script src="js/core/bazi.js"></script>
+
+  <!-- 文案/词典/映射数据 -->
+  <script src="js/data/bazi-text.js"></script>
+  <script src="js/data/cities.js"></script>
+  <script src="js/data/shengxiao.js"></script>
+  <script src="js/data/xingzuo.js"></script>
+  <script src="js/data/xingming.js"></script>
+  <script src="js/data/shengri.js"></script>
+  <script src="js/data/ziwei.js"></script>
+  <script src="js/data/liuyao.js"></script>
+  <script src="js/data/qimen.js"></script>
+  <script src="js/data/yijing.js"></script>
+  <script src="js/data/shuzi.js"></script>
+  <script src="js/data/fengshui.js"></script>
+  <script src="js/data/hemwei.js"></script>
+  <script src="js/data/liunian.js"></script>
+  <script src="js/data/jiemeng.js"></script>
+  <script src="js/data/cezi.js"></script>
+  <script src="js/data/mianxiang.js"></script>
+  <script src="js/data/qianshi.js"></script>
+  <script src="js/data/taiyi.js"></script>
+
+  <!-- 计算核心：各模块 -->
+  <script src="js/core/shengxiao.js"></script>
+  <script src="js/core/xingzuo.js"></script>
+  <script src="js/core/xingming.js"></script>
+  <script src="js/core/shengri.js"></script>
+  <script src="js/core/ziwei.js"></script>
+  <script src="js/core/liuyao.js"></script>
+  <script src="js/core/qimen.js"></script>
+  <script src="js/core/yijing.js"></script>
+  <script src="js/core/shuzi.js"></script>
+  <script src="js/core/fengshui.js"></script>
+  <script src="js/core/hemwei.js"></script>
+  <script src="js/core/liunian.js"></script>
+  <script src="js/core/jiemeng.js"></script>
+  <script src="js/core/cezi.js"></script>
+  <script src="js/core/mianxiang.js"></script>
+  <script src="js/core/qianshi.js"></script>
+  <script src="js/core/taiyi.js"></script>
+
+  <!-- 界面面板（插件式，注册到 window.PANELS[id]） -->
+  <script src="js/ui/panels/shengxiao.js"></script>
+  <script src="js/ui/panels/xingzuo.js"></script>
+  <script src="js/ui/panels/xingming.js"></script>
+  <script src="js/ui/panels/shengri.js"></script>
+  <script src="js/ui/panels/ziwei.js"></script>
+  <script src="js/ui/panels/liuyao.js"></script>
+  <script src="js/ui/panels/qimen.js"></script>
+  <script src="js/ui/panels/yijing.js"></script>
+  <script src="js/ui/panels/shuzi.js"></script>
+  <script src="js/ui/panels/fengshui.js"></script>
+  <script src="js/ui/panels/hemwei.js"></script>
+  <script src="js/ui/panels/liunian.js"></script>
+  <script src="js/ui/panels/jiemeng.js"></script>
+  <script src="js/ui/panels/cezi.js"></script>
+  <script src="js/ui/panels/mianxiang.js"></script>
+  <script src="js/ui/panels/qianshi.js"></script>
+  <script src="js/ui/panels/taiyi.js"></script>
+  <script src="js/ui/baihua.js"></script>
+
+  <!-- 主程序（菜单 + 路由 + 个人档案） -->
+  <script src="js/ui/app.js"></script>
+</body>
+</html>
