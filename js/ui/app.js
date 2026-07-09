@@ -54,6 +54,9 @@
   const $ = (s, p) => (p || document).querySelector(s);
   const el = (tag, cls, html) => { const e = document.createElement(tag); if (cls) e.className = cls; if (html != null) e.innerHTML = html; return e; };
 
+  // 中文序号（菜单用，一..廿一）
+  const CN_NUM = ['零', '一', '二', '三', '四', '五', '六', '七', '八', '九', '十', '十一', '十二', '十三', '十四', '十五', '十六', '十七', '十八', '十九', '二十', '廿一'];
+
   // ===== 渲染菜单 =====
   function renderMenu() {
     const box = $('#menu');
@@ -61,7 +64,7 @@
     MODULES.forEach((m, i) => {
       const item = el('button', 'menu-item' + (m.status === 'ready' ? ' ready' : ''));
       item.dataset.id = m.id;
-      item.innerHTML = '<span class="m-name">' + m.name + '</span><span class="m-desc">' + m.desc + '</span>' +
+      item.innerHTML = '<span class="m-name">' + (CN_NUM[i + 1] || (i + 1)) + ' · ' + m.name + '</span><span class="m-desc">' + m.desc + '</span>' +
         (m.status === 'ready' ? '<span class="m-tag">可用</span>' : (m.status === 'ready-in-bazi' ? '<span class="m-tag sub">含于八字</span>' : '<span class="m-tag soon">敬请期待</span>'));
       item.onclick = () => selectModule(m.id);
       box.appendChild(item);
