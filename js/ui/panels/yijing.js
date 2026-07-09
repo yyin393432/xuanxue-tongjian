@@ -139,6 +139,7 @@
       box.appendChild(el('p', 'warn', '本卦无动爻（静卦），以卦辞与全卦意象参看。'));
     }
 
+    if (window.SVGKit) box.insertAdjacentHTML('beforeend', window.SVGKit.yijingGua(r.lines, r.ben && r.ben.name, r.bian && r.bian.name));
     box.appendChild(window.BaiHua.yijing(r));
     box.appendChild(el('p', 'disclaimer', '免责声明：本工具仅供娱乐与文化研究，所有结果不代表任何医疗、财务、法律或人生建议。请理性看待，切勿迷信。'));
   }
